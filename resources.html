@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ресурси міста - Симулятор міста</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const materialPrices = {
+                brick: 500, wood: 300, steel: 100, sand: 200, glass: 150, slate: 120
+            };
+    
+            const maxResources = {
+                brick: 20000, wood: 10000, steel: 50000, sand: 15000, glass: 5000, slate: 8000
+            };
+    
+            const buildingMaterials = {
+                house: { brick: 66, wood: 6, steel: 3, sand: 17, glass: 6, slate: 40 },
+                factory: { brick: 0, wood: 0, steel: 10, sand: 0, glass: 14, slate: 73 },
+                hotel: { brick: 92, wood: 0, steel: 0, sand: 4, glass: 18, slate: 14 },
+                school: { brick: 0, wood: 0, steel: 85, sand: 16, glass: 27, slate: 32 }
+            };
+    
+            let resources = { ...maxResources };
+            let budget = 10000000;
+            
+            function updateProgressBar(material) {
+                const bar = document.getElementById(material + "-bar");
+                const percentage = (resources[material] / maxResources[material]) * 100;
+                bar.style.width = percentage + "%";
+                bar.textContent = percentage.toFixed(2) + "%";
+                document.getElementById(material).textContent = resources[material];
+            }
+    
+            function updateBudgetProgress() {
+                const bar = document.getElementById("budget-bar");
+                const percentage = (budget / 10000000) * 100;
+                bar.style.width = percentage + "%";
+                bar.textContent = percentage.toFixed(2) + "%";
+                document.getElementById("budget").textContent = budget.toLocaleString();
+            }
+    
+            function calculateTotalCost() {
+                const used = (id) => parseInt(document.getElementById(id).value) || 0;
+                const total = used("brick-used") * materialPrices.brick +
+                            used("wood-used") * materialPrices.wood +
+                            used("steel-used") * materialPrices.steel +
+                            used("sand-used") * materialPrices.sand +
+                            used("glass-used") * materialPrices.glass +
+                            used("slate-used") * materialPrices.slate;
+                document.getElementById("cost").textContent = total.toLocaleString() + " $";
+                return total;
+            }
+    
+            document.getElementById("building-type").addEventListener("change", function () {
+                const type = this.value;
+                if (buildingMaterials[type]) {
+                    const mat = buildingMaterials[type];
+                    for (const key in mat) {
+                        document.getElementById(key + "-used").value = mat[key];
+                    }
+                    calculateTotalCost();
+                }
+            });
+    
+            document.querySelectorAll(".used-input").forEach(input => {
+                input.addEventListener("input", calculateTotalCost);
+            });
+    
+            document.getElementById("payButton").addEventListener("click", function () {
+                const total = calculateTotalCost();
+                if (total > budget) {
+                    alert("❌ Недостатньо коштів.");
+                    return;
+                }
+    
+                const check = key => parseInt(document.getElementById(key + "-used").value) || 0;
+                for (const key in resources) {
+                    if (check(key) > resources[key]) {
+                        alert("❌ Недостатньо ресурсу: " + key);
+                        return;
+                    }
+                }
+    
+                document.getElementById("confirmation-modal").style.display = "flex";
+            });
+    
+            document.getElementById("confirm-pay-button").addEventListener("click", function () {
+                const used = key => parseInt(document.getElementById(key + "-used").value) || 0;
+                const totalCost = calculateTotalCost();
+    
+                budget -= totalCost;
+                for (const key in resources) {
+                    resources[key] -= used(key);
+                    updateProgressBar(key);
+                }
+                updateBudgetProgress();
+    
+                alert("✅ Оплата проведена!");
+                document.getElementById("confirmation-modal").style.display = "none";
+                document.getElementById("feedback-section").style.display = "block";
+            });
+    
+            document.getElementById("cancel-pay-button").addEventListener("click", () => {
+                document.getElementById("confirmation-modal").style.display = "none";
+            });
+    
+            // 🎉 Код для збирання фідбеку через емодзі
+            let selectedFeedback = null;
+    
+            document.querySelectorAll(".emoji-option").forEach(emoji => {
+                emoji.addEventListener("click", function () {
+                    selectedFeedback = this.getAttribute("data-feedback");
+    
+                    // Підсвічуємо вибране емодзі
+                    document.querySelectorAll(".emoji-option").forEach(e => {
+                        e.style.border = "none";
+                        e.style.transform = "scale(1)";
+                    });
+                    this.style.border = "2px solid green";
+                    this.style.borderRadius = "10px";
+                    this.style.transform = "scale(1.2)";
+                });
+            });
+    
+            document.getElementById("submit-feedback").addEventListener("click", function () {
+    if (!selectedFeedback) {
+        alert("Будь ласка, оберіть ваш відгук!");
+        return;
+    }
+
+    console.log("Відгук на будівництво:", selectedFeedback); // Можна замінити на збереження
+    document.getElementById("feedback-section").style.display = "none";
+    document.getElementById("thank-you-modal").style.display = "flex"; // Показуємо модальне вікно подяки
+});
+
+// Закриття модального вікна подяки
+document.getElementById("close-thank-you-modal").addEventListener("click", function () {
+    document.getElementById("thank-you-modal").style.display = "none"; // Закриває модальне вікно
+});
+
+});
+    </script>
+    
+</head>
+<body>
+
+<header>
+    <h1><em>Симулятор управління містом</em></h1>
+    <nav>
+        <ul class="nav-menu">
+            <li><em><a href="index.html">Головна</a></em></li>
+            <li><em><a href="construction.html">Будівництво</a></em></li>
+            <li><em><a href="resources.html">Ресурси міста</a></em></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section id="resources" class="info-section city-style">
+        <div class="icon">💰</div>
+        <div class="text-content">
+            <h2>Ресурси міста</h2>
+            <p>Ось поточний бюджет міста, наявні матеріали та їх об’єм.</p>
+        </div>
+    </section>
+
+    <section class="resources-info">
+        <h3>Поточні ресурси</h3>
+        <div class="resources-list">
+            <div class="resource-item">
+                <h4>Бюджет міста:</h4>
+                <p>💲<span id="budget">10,000,000</span></p>
+                <div class="progress-bar"><div class="progress" id="budget-bar" style="width: 100%;">100%</div></div>
+            </div>
+            <div class="resource-item">
+                <h4>Матеріали:</h4>
+                <ul>
+                    <li>🧱 Цегла: <span id="brick">20000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="brick-bar" style="width: 100%;">100%</div></div>
+                    <li>🪵 Дерево: <span id="wood">10000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="wood-bar" style="width: 100%;">100%</div></div>
+                    <li>🪨 Сталь: <span id="steel">50000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="steel-bar" style="width: 100%;">100%</div></div>
+                    <li>🏖️ Пісок: <span id="sand">15000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="sand-bar" style="width: 100%;">100%</div></div>
+                    <li>🪟 Скло: <span id="glass">5000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="glass-bar" style="width: 100%;">100%</div></div>
+                    <li>🪶 Шифер: <span id="slate">8000</span> м³</li>
+                    <div class="progress-bar"><div class="progress" id="slate-bar" style="width: 100%;">100%</div></div>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="building-selection">
+        <h3>Оберіть тип будівлі</h3>
+        <div class="select-wrapper">
+            <select id="building-type">
+                <option value="">-- Оберіть будівлю --</option>
+                <option value="house">Будинок</option>
+                <option value="factory">Фабрика</option>
+                <option value="hotel">Готель</option>
+                <option value="school">Школа</option>
+            </select>
+        </div>
+
+    <section class="resources-input">
+        <h3>Використані матеріали</h3>
+        <div class="resource-container">
+            <label for="brick-used">🧱 Цегла: </label>
+            <input type="number" id="brick-used" min="0" value="0">
+        </div>
+        <div class="resource-container">
+            <label for="wood-used">🪵 Дерево: </label>
+            <input type="number" id="wood-used" min="0" value="0">
+        </div>
+        <div class="resource-container">
+            <label for="steel-used">🪨 Сталь: </label>
+            <input type="number" id="steel-used" min="0" value="0">
+        </div>
+        <div class="resource-container">
+            <label for="sand-used">🏖️ Пісок: </label>
+            <input type="number" id="sand-used" min="0" value="0">
+        </div>
+        <div class="resource-container">
+            <label for="glass-used">🪟 Скло: </label>
+            <input type="number" id="glass-used" min="0" value="0">
+        </div>
+        <div class="resource-container">
+            <label for="slate-used">🪶 Шифер: </label>
+            <input type="number" id="slate-used" min="0" value="0">
+        </div>
+    </section>
+    </section>
+
+    <section class="construction-cost">
+        <h3>Інформація про будівництво</h3>
+        <p>🔨 <strong>Вартість будівництва:</strong> <span id="cost">0</span> </p>
+        <button class="btn2" id="payButton">Оплатити будівництво</button>
+    </section>
+
+    <!-- Модальне вікно підтвердження -->
+    <div id="confirmation-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Підтвердження оплати</h2>
+            <p>Ви готові здійснити оплату за будівництво?</p>
+            <button id="confirm-pay-button">Так, оплатити</button>
+            <button id="cancel-pay-button">Скасувати</button>
+        </div>
+    </div>
+    <section id="feedback-section" style="display: none; text-align: center; margin-top: 20px;">
+        <h3>🗣️ Як ви оцінюєте це будівництво?</h3>
+        <div id="emoji-feedback" style="font-size: 2rem; margin-bottom: 15px;">
+            <span class="emoji-option" data-feedback="good">😍</span>
+            <span class="emoji-option" data-feedback="ok">🙂</span>
+            <span class="emoji-option" data-feedback="bad">😡</span>
+        </div>
+        <div id="feedback-text"></div>
+        <button id="submit-feedback" style="padding: 10px 20px; font-size: 1rem;">Надіслати відгук</button>
+    </section>
+    
+    <!-- Модальне вікно подяки -->
+    <div id="thank-you-modal" class="modals" style="display: none;">
+        <div class="modal-content">
+            <h2>Дякуємо за ваш відгук!</h2>
+            <p>🎉 Вашу думку дуже цінуємо! Будь ласка, слідкуйте за оновленнями в нашому місті.</p>
+            <button id="close-thank-you-modal">Закрити</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="contact-info">
+        <p><strong>Контактна інформація:</strong></p>
+        <p>📞 Телефон: <a href="tel:+380684292967">+380 (68) 429 29 67</a></p>
+        <p>✉️ Електронна пошта: <a href="mailto:galynakud121@gmail.com">galynakud121@gmail.com</a></p>
+    </div>
+</footer>
+
+</body>
+</html>

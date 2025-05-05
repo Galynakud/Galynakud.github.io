@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симулятор міста</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1><em>Симулятор управління містом</em></h1>
+        <nav>
+            <ul>
+                <li><em><a href="index.html">Головна</a></em></li>
+                <li><em><a href="construction.html">Будівництво</a></em></li>
+                <li><em><a href="resources.html">Ресурси міста</a></em></li>
+            </ul>
+        </nav> 
+    </header>
+
+    <main>
+        <section id="about-city" class="info-section  city-style">
+            <div class="town">🏙️</div>
+            <div class="text-content">
+            <h2>Моє місто</h2>
+            <p>"Моє місто" містить інтерактивну карту з будинками, дорогами, підприємствами та парками. Це головний розділ, де відображається поточний стан розвитку міста.</p>
+        </div>
+        </section>
+
+        <div class="city-grid">
+            <div class="tile building residential" data-type="residential">🏡</div> 
+            <div class="tile road">🛣️</div>
+            <div class="tile building residential" data-type="residential">🏘️</div> 
+            <div class="tile road">🛣️</div>
+            <div class="tile building residential" data-type="residential">🏚️</div> 
+            <div class="tile road">🛤️</div>
+            <div class="tile factory industrial" data-type="industrial">🏭</div>
+            <div class="tile road">🛤️</div>
+            <div class="tile factory industrial" data-type="industrial">🏗️</div> 
+            <div class="tile road">🛤️</div>
+            <div class="tile factory industrial" data-type="industrial">🏬</div>
+            <div class="tile road">🛣️</div>
+            <div class="tile factory industrial" data-type="industrial">🏢</div> 
+            <div class="tile road">🛣️</div>
+            <div class="tile building residential" data-type="residential">🏡</div>
+            <div class="tile factory industrial" data-type="industrial">🏬</div>
+            <div class="tile building residential" data-type="residential">🏘️</div>
+            <div class="tile road">🛣️</div>
+            <div class="tile building residential" data-type="residential">🏠</div>
+            <div class="tile road">🛣️</div>
+            <div class="tile building residential" data-type="residential">🏡</div>
+            <div class="tile road">🛤️</div>
+            <div class="tile building residential" data-type="residential">🏚️</div>
+            <div class="tile road">🛣️</div>
+        </div>
+        
+        <div class="filters">
+            <button onclick="filterBuildings('all')">Усі</button>
+            <button onclick="filterBuildings('residential')">Житлові</button>
+            <button onclick="filterBuildings('commercial')">Комерційні</button>
+            <button onclick="filterBuildings('industrial')">Промислові</button>
+        </div>
+        <section id="construction-info" class="info-section alt-style">
+            <div class="icon">🏗️</div>
+            <div class="text-content">
+                <h2>Будівництво</h2>
+                <p>Розширюйте місто, додавайте нові об'єкти та керуйте будівельними ресурсами!</p>
+                <p>Керуйте плануванням, обирайте ділянки для забудови, контролюйте швидкість будівництва та розподіляйте завдання між робітниками. Оптимальне управління дозволить вам створити сучасне, комфортне та екологічне місто.</p>
+                <a href="construction.html" class="btn">Почати будівництво</a>
+            </div>
+        </section>
+
+        <section id="resources-info" class="info-section alt-style">
+            <div class="icon">💲</div>
+            <div class="text-content">
+                <h2>Ресурси міста</h2>
+                <p>Контролюйте бюджет, ресурси та ефективно управляйте розвитком міста.</p>
+                <p>Слідкуйте за рівнем доходів та витрат, використовуйте природні та промислові ресурси, приймайте стратегічні рішення щодо фінансування важливих міських проєктів. Ефективне управління гарантує стабільне зростання вашого міста!</p>
+                <a href="resources.html" class="btn">Переглянути ресурси</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="contact-info">
+            <p><strong>Контактна інформація:</strong></p>
+            <p>📞 Телефон: <a href="tel:+380684292967">+380 (68) 429 29 67</a></p>
+            <p>✉️ Електронна пошта: <a href="mailto:galynakud121@gmail.com">galynakud121@gmail.com</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>
